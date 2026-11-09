@@ -6,10 +6,11 @@ and measuring retrieval quality. The MVP is designed to run locally without a
 paid AI credential by using deterministic embeddings and an extractive answer
 provider.
 
-> **Project status: MVP verified locally.** On 2026-11-09 the backend and
-> frontend checks, both image builds, PostgreSQL migration, Compose health, and
-> the authenticated upload/retrieval/citation flow passed locally. GitHub Actions
-> and hosted model providers remain unverified.
+> **Project status: MVP verified locally and in CI.** On 2026-11-09 the
+> backend and frontend checks, both image builds, PostgreSQL migration, Compose
+> health, secret scan, and authenticated upload/retrieval/citation flow passed
+> locally and in [GitHub Actions](https://github.com/Santhoshreddy1999/enterprise-rag-assistant/actions/runs/42589088728).
+> Hosted model providers remain unverified.
 
 ## Current status
 
@@ -44,6 +45,8 @@ provider.
 - End to end: registration, cookie authentication, text ingestion, hybrid
   retrieval, cited answer, history persistence, evaluation hit rate, Nginx API
   proxy, and second-user isolation passed through `scripts/smoke_test.py`.
+- Remote CI: backend, frontend, Compose validation, secret scan, both image
+  builds, and the PostgreSQL end-to-end smoke job passed on commit `9958a53`.
 
 ### Planned outside the first vertical slice
 
@@ -309,10 +312,8 @@ controls.
 
 ## Remaining unverified gates
 
-- The GitHub Actions workflow has not run because this repository has not yet
-  been published.
-- The workflow's secret scan and pull-request dependency review therefore have
-  no remote result.
+- Pull-request dependency review is configured but has not passed on a
+  maintained feature pull request; it is intentionally skipped on pushes.
 - OpenAI and Anthropic live calls were not attempted because no provider
   credentials were supplied; their HTTP adapter behavior is covered with a
   deterministic mock.
@@ -330,6 +331,7 @@ controls.
 - [ADR 0001: System architecture](docs/adr/0001-system-architecture.md)
 - [ADR 0002: pgvector hybrid retrieval](docs/adr/0002-pgvector-hybrid-retrieval.md)
 - [Contributing](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
 
 ## License
 

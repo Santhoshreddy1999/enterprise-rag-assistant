@@ -210,6 +210,8 @@ On 2026-11-09:
 - Alembic created the initial schema and vector extension.
 - `scripts/smoke_test.py` passed through the direct API.
 - The same smoke test passed through the Nginx `/api/v1` proxy.
+- [GitHub Actions run 42589088728](https://github.com/Santhoshreddy1999/enterprise-rag-assistant/actions/runs/42589088728)
+  independently built both images and passed the PostgreSQL/pgvector smoke job.
 
 This is local deployment evidence only. No remote or production deployment is
 claimed.

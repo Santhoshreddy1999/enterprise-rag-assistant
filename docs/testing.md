@@ -1,7 +1,7 @@
 # Testing Strategy
 
-**Status:** local MVP gates verified on 2026-11-09; remote CI has not yet run.
-No gate is considered passed merely because its workflow exists.
+**Status:** local MVP gates and the first full remote CI run passed on
+2026-11-09. No gate is considered passed merely because its workflow exists.
 
 ## Principles
 
@@ -192,7 +192,13 @@ Verified locally on 2026-11-09:
 
 Still unverified:
 
-- GitHub Actions execution.
-- CI secret scan and pull-request dependency review.
+- Pull-request dependency review on a maintained feature PR; the job is
+  intentionally skipped on pushes.
 - Live OpenAI/Anthropic calls.
 - Browser automation, load testing, cloud deployment, and backup restoration.
+
+Remote evidence:
+
+- [GitHub Actions run 42589088728](https://github.com/Santhoshreddy1999/enterprise-rag-assistant/actions/runs/42589088728)
+  passed backend, frontend, Compose validation, secret scan, both image builds,
+  and PostgreSQL end-to-end smoke on commit `9958a53`.

@@ -251,8 +251,8 @@ Open security work before internet exposure:
 - CSRF token or strict `Origin` validation for state-changing requests.
 - Authentication and expensive-operation rate limits.
 - Stronger compressed-size, parser-time, and page/part limits for PDF/DOCX.
-- Container/dependency vulnerability scan review and a completed CI secret
-  scan.
+- Container/dependency vulnerability scan review and pull-request dependency
+  review. The CI secret scan passed on 2026-11-09.
 - Server-side session revocation and refresh-token strategy.
 - External-provider privacy review and live timeout/failure exercise.
 - Browser automation for CSP, stored-content rendering, and disallowed origins.
