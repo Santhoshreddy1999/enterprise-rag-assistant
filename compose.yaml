@@ -1,0 +1,90 @@
+name: enterprise-rag-assistant
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-enterprise_rag}
+      POSTGRES_USER: ${POSTGRES_USER:-enterprise_rag}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - application
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    init: true
+    environment:
+      RAG_ENVIRONMENT: ${RAG_ENVIRONMENT:-development}
+      RAG_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-enterprise_rag}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-enterprise_rag}
+      RAG_AUTO_CREATE_SCHEMA: ${RAG_AUTO_CREATE_SCHEMA:-true}
+      RAG_JWT_SECRET: ${RAG_JWT_SECRET:?Set RAG_JWT_SECRET in .env}
+      RAG_JWT_TTL_MINUTES: ${RAG_JWT_TTL_MINUTES:-30}
+      RAG_COOKIE_SECURE: ${RAG_COOKIE_SECURE:-false}
+      RAG_CORS_ORIGINS: '${RAG_CORS_ORIGINS:-["http://localhost:3000"]}'
+      RAG_ANSWER_PROVIDER: ${RAG_ANSWER_PROVIDER:-local}
+      RAG_UPLOAD_MAX_BYTES: ${RAG_UPLOAD_MAX_BYTES:-10485760}
+      RAG_LOG_LEVEL: ${RAG_LOG_LEVEL:-INFO}
+      RAG_OPENAI_API_KEY: ${RAG_OPENAI_API_KEY:-}
+      RAG_OPENAI_MODEL: ${RAG_OPENAI_MODEL:-gpt-4o-mini}
+      RAG_ANTHROPIC_API_KEY: ${RAG_ANTHROPIC_API_KEY:-}
+      RAG_ANTHROPIC_MODEL: ${RAG_ANTHROPIC_MODEL:-claude-3-5-haiku-latest}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/ready', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - application
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${FRONTEND_PORT:-3000}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget -q --spider http://127.0.0.1:8080/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - application
+
+volumes:
+  pgdata:
+
+networks:
+  application:
+    driver: bridge

@@ -1,0 +1,74 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "enterprise-rag-assistant-backend"
+version = "0.1.0"
+description = "FastAPI backend for the Enterprise RAG Assistant"
+requires-python = ">=3.10"
+dependencies = [
+  "alembic>=1.14,<2",
+  "email-validator>=2.2,<3",
+  "fastapi>=0.115,<1",
+  "httpx>=0.28,<1",
+  "pgvector>=0.3.6,<1",
+  "prometheus-client>=0.21,<1",
+  "psycopg[binary]>=3.2,<4",
+  "pwdlib[argon2]>=0.2,<1",
+  "pydantic-settings>=2.7,<3",
+  "PyJWT>=2.10,<3",
+  "pypdf>=5.1,<6",
+  "python-docx>=1.1,<2",
+  "python-multipart>=0.0.20,<1",
+  "SQLAlchemy>=2.0.36,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.14,<2",
+  "pytest>=8.3,<9",
+  "pytest-cov>=6,<7",
+  "ruff>=0.8,<1",
+  "types-PyJWT>=1.7.1,<2",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "postgres: requires TEST_POSTGRES_URL and a PostgreSQL server with pgvector",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "SIM", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.mypy]
+python_version = "3.10"
+plugins = ["pydantic.mypy"]
+strict = true
+warn_unreachable = true
+exclude = ["alembic/versions"]
+
+[[tool.mypy.overrides]]
+module = ["docx.*", "pgvector.*", "prometheus_client.*", "pypdf.*", "pwdlib.*"]
+ignore_missing_imports = true

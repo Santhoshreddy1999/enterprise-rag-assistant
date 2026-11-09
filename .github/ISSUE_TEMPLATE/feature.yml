@@ -1,0 +1,49 @@
+name: Product capability
+description: Propose a bounded, verifiable RAG assistant capability
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Identify the user and problem before proposing technology.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Verifiable outcome
+      description: Describe the end-to-end behavior that will prove completion.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and exclusions
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Data, AI, security, and operational risks
+      description: Consider ownership isolation, prompt injection, provider data, cost, and failure behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Required verification
+      description: Identify unit, integration, browser, container, and smoke evidence.
+    validations:
+      required: true
